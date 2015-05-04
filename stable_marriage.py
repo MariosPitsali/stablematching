@@ -1,4 +1,5 @@
 import json
+import sys
 
 def match_pairs(primary, secondary, pairs={}):
     match_counter = 0
@@ -41,4 +42,23 @@ def format_data(data):
     return formated_data
 
 if (__name__=='__main__'):
-    pass
+    arguments = sys.argv
+    primary_is_male = (arguments[1] == '-m')
+    input_file = arguments[2]
+    output_file = None
+    if (len(arguments) >= 5):
+        output_file = arguments[4]
+    with open(input_file) as input_file_handle:
+        data = json.loads(input_file_handle.read())
+        if (primary_is_male):
+            primary = format_data(data['men_rankings'])
+            secondary = format_data(data['women_rankings'])
+        else:
+            primary = format_data(data['women_rankings'])
+            secondary = format_data(data['men_rankings'])
+        pairs = match_pairs(primary, secondary)
+        if (output_file):
+            with open(output_file, 'w') as output_file_handle:
+                output_file_handle.write(json.dumps(pairs))
+        else:
+            print(pairs)
